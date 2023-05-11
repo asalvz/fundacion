@@ -1,192 +1,72 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Donaciones en Ethereum y Bitcoin</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-        }
-
-        header {
-            background-color: #333;
-            color: #fff;
-            padding: 20px;
-        }
-
-        h1 {
-            margin: 0;
-        }
-
-        main {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: calc(100vh - 80px);
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            border: 2px solid #333;
-            border-radius: 10px;
-            background-color: #f2f2f2;
-            box-shadow: 0 0 10px #333;
-            max-width: 400px;
-        }
-
-        label {
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-
-        input {
-            margin-bottom: 20px;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            font-size: 16px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        button {
-            background-color: #333;
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #444;
-        }
-
-        .alert {
-            margin: 20px 0;
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 16px;
-            text-align: center;
-            display: none;
-        }
-
-        .alert--success {
-            background-color: #3c763d;
-            color: #fff;
-        }
-
-        .alert--danger {
-            background-color: #a94442;
-            color: #fff;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donaciones en Ethereum</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <h1>Donaciones en Ethereum y Bitcoin</h1>
+        <h1>Donaciones en Ethereum</h1>
+        <nav>
+            <ul>
+                <li><a href="#">Inicio</a></li>
+                <li><a href="#">Donar</a></li>
+                <li><a href="#">Contacto</a></li>
+            </ul>
+        </nav>
     </header>
     <main>
-        <form id="donation-form">
-            <label>Donar en Ethereum:</label>
-            <input type="text" name="eth_donation" placeholder="Ingrese la dirección de su billetera Ethereum">
-            <label>Donar en Bitcoin:</label>
-            <input type="text" name="btc_donation" placeholder="Ingrese la dirección de su billetera Bitcoin">
-            <button type="submit">Donar</button>
-        </form>
-        <div id="alerts"></div>
+        <section class="hero">
+            <h2>Ayuda a cambiar vidas con una donación</h2>
+            <p>Cada donación ayuda a apoyar a una organización benéfica diferente y hace una diferencia significativa en la vida de aquellos que más lo necesitan.</p>
+            <button onclick="scrollToForm()">Donar ahora</button>
+        </section>
+        <section class="donation-form" id="donation-form">
+            <h2>¡Ayuda a hacer una diferencia!</h2>
+            <form onsubmit="handleDonation(event)">
+                <div class="form-group">
+                    <label for="eth_address">Dirección de Ethereum</label>
+                    <input type="text" id="eth_address" name="eth_address">
+                </div>
+                <div class="form-group">
+                    <label for="eth_amount">Cantidad ETH</label>
+                    <input type="number" step="any" min="0" id="eth_amount" name="eth_amount">
+                </div>
+                <div class="form-group">
+                    <label for="message">Mensaje (opcional)</label>
+                    <textarea id="message" name="message"></textarea>
+                </div>
+                <button type="submit">Donar</button>
+            </form>
+        </section>
     </main>
-
-    <script src="https://cdn.jsdelivr.net/npm/web3@1.3.6/dist/web3.min.js"></script>
+    <footer>
+        <p>Hecho con ❤️ por mi</p>
+    </footer>
+    <script src="script.js"></script>
     <script>
-        const ETH_ADDRESS = '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4'; // Dirección de ejemplo de Ethereum
-        const BTC_ADDRESS = '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa'; // Dirección de ejemplo de Bitcoin
+        function scrollToForm() {
+    const form = document.querySelector("#donation-form");
+    form.scrollIntoView({behavior: "smooth"});
+}
 
-        const donationForm = document.getElementById('donation-form');
-        const alerts = document.getElementById('alerts');
+function handleDonation(event) {
+    event.preventDefault();
+    const ethAddress = document.querySelector("#eth_address").value;
+    const ethAmount = document.querySelector("#eth_amount").value;
+    const message = document.querySelector("#message").value;
 
-       
-        donationForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
+    // Aquí se debería agregar el código para enviar la transacción de Ethereum usando una API
+    console.log(`Se envió una donación de ${ethAmount} ETH a la dirección ${ethAddress} con el siguiente mensaje: ${message}`);
 
-            const ethInput = document.querySelector('input[name="eth_donation"]');
-            const btcInput = document.querySelector('input[name="btc_donation"]');
-
-            const ethDonation = ethInput.value.trim();
-            const btcDonation = btcInput.value.trim();
-
-            if (!ethDonation && !btcDonation) {
-                showAlert('Debe ingresar al menos una dirección de billetera', 'danger');
-                return;
-            }
-
-            if (ethDonation) {
-                const isValidEthAddress = await isValidEthAddress(ethDonation);
-                if (!isValidEthAddress) {
-                    showAlert('La dirección de Ethereum ingresada no es válida', 'danger');
-                    return;
-                }
-            }
-
-            if (btcDonation) {
-                const isValidBtcAddress = await isValidBtcAddress(btcDonation);
-                if (!isValidBtcAddress) {
-                    showAlert('La dirección de Bitcoin ingresada no es válida', 'danger');
-                    return;
-                }
-            }
-
-            ethInput.value = '';
-            btcInput.value = '';
-
-            showAlert('¡Gracias por su donación!', 'success');
-        });
-
-        async function isValidEthAddress(address) {
-            if (!/^(0x)?[0-9a-f]{40}$/i.test(address)) {
-                return false;
-            }
-            const web3 = new Web3();
-            try {
-                const balance = await web3.eth.getBalance(address);
-                return balance > 0;
-            } catch (error) {
-                console.log(error);
-                return false;
-            }
-        }
-
-        async function isValidBtcAddress(address) {
-            if (!/^[13][a-km-zA-HJ-NP-Z0-9]{26,33}$/.test(address)) {
-                return false;
-            }
-            try {
-                const response = await fetch(`https://api.blockcypher.com/v1/btc/main/addrs/${address}/balance`);
-                const data = await response.json();
-                return data.balance > 0;
-            } catch (error) {
-                console.log(error);
-                return false;
-            }
-        }
-
-        function showAlert(message, type) {
-            const alert = document.createElement('div');
-            alert.classList.add('alert', `alert--${type}`);
-            alert.innerText = message;
-            alerts.appendChild(alert);
-            setTimeout(() => {
-                alert.remove();
-            }, 3000);
-        }
-    </script>
+    // Limpiar los campos del formulario
+    document.querySelector("#eth_address").value = "";
+    document.querySelector("#eth_amount").value = "";
+    document.querySelector("#message").value = "";
+    alert("¡Gracias por su donación!");
+}
+     </script>
 </body>
 </html>
